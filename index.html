@@ -632,6 +632,272 @@
       .footer-row { flex-direction: column; }
     }
   </style>
+
+  <!-- Typography refinement: balanced portfolio scale -->
+  <style id="typography-refinement">
+    /* Balanced type scale matching the professional portfolio style. */
+    body {
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .brand { font-size: 20px; }
+    .brand-mark { font-size: 14.5px; }
+    .nav-links a { font-size: 14.5px; }
+
+    .eyebrow {
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    h1 {
+      font-size: clamp(38px, 4vw, 48px);
+      line-height: 1.07;
+      letter-spacing: -0.048em;
+      text-wrap: balance;
+    }
+
+    .hero-lead {
+      font-size: clamp(16.5px, 1.25vw, 18px);
+      line-height: 1.68;
+      text-wrap: pretty;
+    }
+
+    .button { font-size: 14.5px; }
+    .dependency-row span { font-size: 12.5px; }
+    .visual-label { font-size: 12.5px; }
+    .floating-card strong {
+      margin-bottom: 4px;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+    .floating-card span {
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    .section-kicker {
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .section-title {
+      font-size: clamp(29px, 3.1vw, 38px);
+      line-height: 1.14;
+      text-wrap: balance;
+    }
+    .section-intro {
+      font-size: 16.5px;
+      line-height: 1.7;
+      text-wrap: pretty;
+    }
+
+    .module-number { font-size: 12.5px; }
+    .module-card h3 {
+      margin-bottom: 9px;
+      font-size: 21px;
+      line-height: 1.2;
+    }
+    .module-card p {
+      margin-bottom: 18px;
+      font-size: 15.5px;
+      line-height: 1.62;
+    }
+    .module-card code {
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .showcase-copy h3 {
+      margin-bottom: 8px;
+      font-size: 21px;
+      line-height: 1.25;
+    }
+    .showcase-copy p {
+      font-size: 15.5px;
+      line-height: 1.62;
+    }
+
+    .step-list li {
+      font-size: 15.5px;
+      line-height: 1.58;
+    }
+    .step-list span { font-size: 12.5px; }
+    .copy-button { font-size: 12.5px; }
+    pre {
+      font-size: 13.5px;
+      line-height: 1.72;
+    }
+
+    .data-copy .section-title {
+      font-size: clamp(28px, 2.8vw, 35px) !important;
+    }
+    .data-copy p {
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    .data-option code {
+      margin-bottom: 6px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .data-option span {
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    .api-card h3 {
+      font-size: 20px;
+      line-height: 1.25;
+    }
+    .api-card li {
+      margin: 8px 0;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .api-card code { font-size: 12.5px; }
+
+    .install-card h2 {
+      font-size: clamp(27px, 2.7vw, 34px);
+      line-height: 1.16;
+      text-wrap: balance;
+    }
+    .install-card p {
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    .install-command {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    footer {
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 700px) {
+      .brand { font-size: 19px; }
+      .brand-mark { font-size: 14px; }
+      .nav-cta { font-size: 13px !important; }
+      .eyebrow { font-size: 12.5px; }
+      h1 {
+        font-size: clamp(34px, 9.5vw, 38px);
+        line-height: 1.08;
+      }
+      .hero-lead {
+        font-size: 16.5px;
+        line-height: 1.68;
+      }
+      .section-title {
+        font-size: 29px;
+        line-height: 1.16;
+      }
+      .data-copy .section-title { font-size: 28px !important; }
+      .section-intro {
+        font-size: 16px;
+        line-height: 1.68;
+      }
+      pre {
+        font-size: 12.5px;
+        line-height: 1.68;
+      }
+    }
+  </style>
+  <!-- /Typography refinement -->
+
+
+  <!-- COMFORT TYPOGRAPHY OVERRIDES -->
+  <style>
+
+    /* Comfortable reading scale: visually between 125% and 150% browser zoom,
+       without letting the hero or section titles become oversized. */
+    :root { --max: 1060px; }
+
+    body {
+      font-size: 17.5px;
+      line-height: 1.70;
+    }
+    .shell { width: min(calc(100% - 40px), var(--max)); }
+
+    .nav { min-height: 68px; padding-block: 11px; }
+    .brand { font-size: 21px; }
+    .brand-mark { font-size: 15px; }
+    .nav-links a { font-size: 15px; }
+    .nav-cta { font-size: 14px !important; }
+
+    .eyebrow { font-size: 13px; }
+    h1 {
+      max-width: 720px;
+      font-size: clamp(42px, 4.45vw, 52px);
+      line-height: 1.075;
+      letter-spacing: -0.05em;
+    }
+    .hero-lead {
+      max-width: 680px;
+      font-size: clamp(18px, 1.35vw, 19.5px);
+      line-height: 1.72;
+    }
+    .button { min-height: 49px; padding: 11px 17px; font-size: 15.5px; }
+    .dependency-row span, .visual-label { font-size: 13.5px; }
+    .floating-card strong { font-size: 15px; }
+    .floating-card span { font-size: 13.5px; line-height: 1.55; }
+
+    .section-title {
+      font-size: clamp(32px, 3.15vw, 40px);
+      line-height: 1.15;
+    }
+    .section-kicker { font-size: 13.5px; }
+    .section-intro { font-size: 17.5px; line-height: 1.72; }
+
+    .module-number { font-size: 13.5px; }
+    .module-card h3 { font-size: 22px; line-height: 1.22; }
+    .module-card p { font-size: 16.5px; line-height: 1.64; }
+    .module-card code { font-size: 13.5px; line-height: 1.55; }
+
+    .showcase-copy h3 { font-size: 22px; line-height: 1.25; }
+    .showcase-copy p { font-size: 16.5px; line-height: 1.64; }
+
+    .step-list { font-size: 16.5px; line-height: 1.62; }
+    .step-list span, .copy-button { font-size: 13.5px; }
+    pre { font-size: 13.5px; line-height: 1.7; }
+
+    .data-copy .section-title { font-size: clamp(30px, 2.85vw, 36px) !important; }
+    .data-copy p { font-size: 16.5px; line-height: 1.65; }
+    .data-option code { font-size: 14px; }
+    .data-option span { font-size: 14.5px; line-height: 1.58; }
+
+    .api-card h3 { font-size: 20px; line-height: 1.25; }
+    .api-card li { font-size: 14.75px; line-height: 1.55; }
+    .api-card code { font-size: 13px; }
+
+    .install-card h2 { font-size: clamp(30px, 2.9vw, 36px); line-height: 1.17; }
+    .install-card p { font-size: 16.5px; line-height: 1.65; }
+    .install-command span { font-size: 14px; }
+    footer { font-size: 14px; }
+
+    @media (max-width: 980px) {
+      :root { --max: 900px; }
+    }
+
+    @media (max-width: 700px) {
+      body { font-size: 17px; }
+      .shell { width: min(calc(100% - 24px), var(--max)); }
+      .brand { font-size: 19.5px; }
+      .brand-mark { font-size: 14.5px; }
+      .nav-cta { font-size: 13.5px !important; }
+      h1 { font-size: clamp(35px, 9vw, 39px); line-height: 1.09; }
+      .hero-lead { font-size: 17.5px; line-height: 1.70; }
+      .button { min-height: 47px; font-size: 15px; }
+      .section-title { font-size: 31px; line-height: 1.17; }
+      .section-intro { font-size: 17px; }
+      .module-card h3, .showcase-copy h3 { font-size: 21px; }
+      .module-card p, .showcase-copy p, .data-copy p { font-size: 16px; }
+      pre { font-size: 13px; }
+      .data-copy .section-title { font-size: 29px !important; }
+      .api-card li { font-size: 14.5px; }
+      footer { font-size: 13.5px; }
+    }
+
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -883,7 +1149,7 @@ freq_cut, fit, params, report = cut.one_peak(
             <p>Clone the repository, install it, and work through the bundled notebook and reference data.</p>
           </div>
           <div class="install-command">
-            <span>git clone https://github.com/SinaMehboodi/drlib.git</span>
+            <span>git clone …/drlib.git</span>
             <a class="button primary" href="https://github.com/SinaMehboodi/drlib" target="_blank" rel="noreferrer">Repository ↗</a>
           </div>
         </div>
