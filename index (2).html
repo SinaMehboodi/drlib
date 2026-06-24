@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="drlib — a Python toolkit for FMR spectroscopy, CPW field modelling, and 2-D REXS simulation." />
+  <meta name="theme-color" content="#8dd3c7" />
+  <meta property="og:title" content="drlib | Scientific Python toolkit" />
+  <meta property="og:description" content="FMR analysis, CPW field modelling, peak fitting, and reciprocal-space simulation in one reusable Python package." />
+  <meta property="og:type" content="website" />
+  <title>drlib | Scientific Python toolkit</title>
+
+  <style>
+    :root {
+      --mint: #8dd3c7;
+      --yellow: #ffffb3;
+      --lavender: #bebada;
+      --coral: #fb8072;
+      --blue: #80b1d3;
+      --orange: #fdb462;
+      --green: #b3de69;
+      --pink: #fccde5;
+      --grey: #d9d9d9;
+
+      --ink: #1d2933;
+      --ink-soft: #52606d;
+      --line: rgba(29, 41, 51, 0.14);
+      --paper: #fffdf8;
+      --white: #ffffff;
+      --shadow: 0 18px 50px rgba(32, 52, 64, 0.10);
+      --shadow-soft: 0 9px 28px rgba(32, 52, 64, 0.08);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --max: 1140px;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 4% 8%, rgba(141, 211, 199, 0.30), transparent 25rem),
+        radial-gradient(circle at 96% 18%, rgba(190, 186, 218, 0.28), transparent 25rem),
+        radial-gradient(circle at 82% 94%, rgba(252, 205, 229, 0.24), transparent 24rem),
+        var(--paper);
+      font-size: 16px;
+      line-height: 1.62;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { display: block; max-width: 100%; }
+    a { color: inherit; }
+    button, input { font: inherit; }
+    code, pre { font-family: var(--mono); }
+
+    .shell {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+    }
+
+    .skip-link {
+      position: fixed;
+      left: 16px;
+      top: -80px;
+      z-index: 100;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--ink);
+      color: white;
+      transition: top 160ms ease;
+    }
+    .skip-link:focus { top: 16px; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 253, 248, 0.84);
+      border-bottom: 1px solid rgba(29, 41, 51, 0.08);
+    }
+
+    .nav {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: 21px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--mint), var(--blue));
+      border: 1px solid rgba(29, 41, 51, 0.12);
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,0.28);
+      font-family: var(--mono);
+      font-size: 15px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 650;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+    .nav-links a:hover, .nav-links a:focus-visible {
+      background: rgba(141, 211, 199, 0.24);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px !important;
+      color: var(--ink) !important;
+      background: var(--yellow);
+      border: 1px solid var(--line);
+    }
+
+    .hero {
+      padding: 72px 0 42px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+      gap: 44px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(141, 211, 199, 0.26);
+      border: 1px solid rgba(29, 41, 51, 0.10);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--coral);
+      box-shadow: 0 0 0 4px rgba(251, 128, 114, 0.18);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 18px;
+      font-size: clamp(36px, 4.6vw, 50px);
+      line-height: 1.04;
+      letter-spacing: -0.052em;
+      font-weight: 850;
+    }
+
+    .hero-lead {
+      max-width: 650px;
+      margin-bottom: 24px;
+      color: var(--ink-soft);
+      font-size: clamp(17px, 1.5vw, 19px);
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px;
+      margin-bottom: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      gap: 9px;
+      padding: 10px 15px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+      transition: transform 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    }
+    .button:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+    .button.primary { background: var(--ink); color: white; }
+    .button.secondary { background: var(--yellow); }
+
+    .dependency-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .dependency-row span {
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #44515d;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 390px;
+    }
+
+    .visual-frame {
+      position: absolute;
+      top: 28px;
+      right: 0;
+      left: 30px;
+      aspect-ratio: 1.75;
+      margin: 0;
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      background: var(--lavender);
+      box-shadow: var(--shadow);
+    }
+
+    .visual-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      padding: 10px;
+      background: white;
+    }
+
+    .visual-label {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.90);
+      border: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .floating-card {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: min(285px, 74%);
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--yellow);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-soft);
+    }
+    .floating-card strong { display: block; margin-bottom: 3px; font-size: 14px; }
+    .floating-card span { display: block; color: #5a6268; font-size: 12.5px; line-height: 1.5; }
+
+    .section {
+      padding: 74px 0;
+    }
+    .section.compact { padding-top: 42px; }
+
+    .section-kicker {
+      margin-bottom: 8px;
+      color: #4d5b67;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-title {
+      max-width: 760px;
+      margin-bottom: 14px;
+      font-size: clamp(30px, 3.5vw, 40px);
+      line-height: 1.12;
+      letter-spacing: -0.042em;
+    }
+
+    .section-intro {
+      max-width: 780px;
+      margin-bottom: 34px;
+      color: var(--ink-soft);
+      font-size: 17px;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .module-card {
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+    .module-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .module-card:nth-child(1) { background: var(--mint); }
+    .module-card:nth-child(2) { background: var(--yellow); }
+    .module-card:nth-child(3) { background: var(--lavender); }
+    .module-card:nth-child(4) { background: var(--pink); }
+
+    .module-number {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 28px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.64);
+      border: 1px solid rgba(29, 41, 51, 0.12);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .module-card h3 { margin-bottom: 8px; font-size: 20px; letter-spacing: -0.025em; }
+    .module-card p { margin-bottom: 17px; color: #3d4c58; font-size: 14.5px; }
+    .module-card code { margin-top: auto; font-size: 12px; color: #3c4851; }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .showcase-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: white;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .showcase-card.wide { grid-column: 1 / -1; }
+    .showcase-media {
+      padding: 18px;
+      background: linear-gradient(135deg, rgba(128,177,211,0.30), rgba(141,211,199,0.28));
+      border-bottom: 1px solid var(--line);
+    }
+    .showcase-card:nth-child(2) .showcase-media { background: linear-gradient(135deg, rgba(190,186,218,0.42), rgba(252,205,229,0.38)); }
+    .showcase-card:nth-child(3) .showcase-media { background: linear-gradient(135deg, rgba(253,180,98,0.38), rgba(255,255,179,0.55)); }
+
+    .showcase-media img {
+      width: 100%;
+      max-height: 390px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: white;
+      border: 1px solid rgba(29,41,51,0.10);
+    }
+
+    .showcase-copy { padding: 20px 22px 22px; }
+    .showcase-copy h3 { margin-bottom: 7px; font-size: 20px; }
+    .showcase-copy p { margin-bottom: 0; color: var(--ink-soft); font-size: 14.5px; }
+
+    .quickstart-wrap {
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(540px, 1.22fr);
+      gap: 36px;
+      align-items: center;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 10px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .step-list li {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 11px;
+      align-items: start;
+      color: var(--ink-soft);
+      font-size: 14.5px;
+    }
+    .step-list span {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--green);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .code-window {
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(29,41,51,0.16);
+      background: #28343d;
+      color: #f7fafb;
+      box-shadow: var(--shadow);
+    }
+
+    .code-toolbar {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 14px 0 16px;
+      background: #34434e;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .window-dots { display: flex; gap: 7px; }
+    .window-dots i { width: 10px; height: 10px; display: block; border-radius: 999px; }
+    .window-dots i:nth-child(1) { background: var(--coral); }
+    .window-dots i:nth-child(2) { background: var(--yellow); }
+    .window-dots i:nth-child(3) { background: var(--mint); }
+
+    .copy-button {
+      padding: 6px 9px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.82);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .copy-button:hover { background: rgba(255,255,255,0.12); }
+
+    pre {
+      margin: 0;
+      padding: 22px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      line-height: 1.7;
+      tab-size: 2;
+    }
+    .code-comment { color: #a9bdc9; }
+    .code-keyword { color: #fccde5; }
+    .code-name { color: #ffffb3; }
+    .code-string { color: #b3de69; }
+    .code-number { color: #fdb462; }
+
+    .data-panel {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: var(--blue);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .data-copy { padding: 34px; }
+    .data-copy p { color: #33434f; }
+    .data-options { display: grid; gap: 10px; padding: 22px; background: rgba(255,255,255,0.48); }
+
+    .data-option {
+      padding: 15px 16px;
+      border-radius: 13px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(29,41,51,0.12);
+    }
+    .data-option code { display: block; margin-bottom: 5px; font-size: 12px; font-weight: 750; }
+    .data-option span { display: block; color: var(--ink-soft); font-size: 13px; }
+
+    .api-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .api-card {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: white;
+      box-shadow: var(--shadow-soft);
+    }
+    .api-card:nth-child(1) { border-top: 6px solid var(--mint); }
+    .api-card:nth-child(2) { border-top: 6px solid var(--orange); }
+    .api-card:nth-child(3) { border-top: 6px solid var(--lavender); }
+    .api-card h3 { margin-bottom: 12px; font-size: 18px; }
+    .api-card ul { margin: 0; padding-left: 18px; }
+    .api-card li { margin: 7px 0; color: var(--ink-soft); font-size: 13.5px; }
+    .api-card code { color: var(--ink); font-size: 12px; }
+
+    .install-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      padding: 31px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, var(--yellow), var(--pink));
+      box-shadow: var(--shadow-soft);
+    }
+    .install-card h2 { margin-bottom: 7px; font-size: clamp(27px, 3vw, 36px); letter-spacing: -0.04em; }
+    .install-card p { margin-bottom: 0; color: #4a5660; }
+    .install-command {
+      min-width: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px 14px;
+      border-radius: 13px;
+      background: rgba(255,255,255,0.80);
+      border: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    footer {
+      padding: 34px 0 48px;
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 14px; }
+    .footer-links a { text-decoration: none; font-weight: 650; }
+    .footer-links a:hover { text-decoration: underline; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 980px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+      .hero { padding-top: 54px; }
+      .hero-grid, .quickstart-wrap, .data-panel { grid-template-columns: 1fr; }
+      .hero-grid { gap: 30px; }
+      .hero-visual { min-height: 365px; }
+      .visual-frame { top: 18px; right: 0; left: 0; }
+      .module-grid { grid-template-columns: 1fr 1fr; }
+      .quickstart-wrap { gap: 26px; }
+      .api-grid { grid-template-columns: 1fr 1fr; }
+      .install-card { grid-template-columns: 1fr; }
+      .install-command { min-width: 0; width: 100%; }
+    }
+
+    @media (max-width: 700px) {
+      body { font-size: 16px; }
+      .shell { width: min(calc(100% - 24px), var(--max)); }
+      .nav { min-height: 62px; }
+      .nav-cta { font-size: 12px !important; padding: 8px 10px !important; }
+      .hero { padding: 42px 0 28px; }
+      h1 { font-size: clamp(34px, 10vw, 40px); }
+      .hero-lead { font-size: 17px; }
+      .hero-visual { min-height: auto; display: grid; gap: 10px; }
+      .visual-frame { position: relative; inset: auto; height: auto; aspect-ratio: 1.75; }
+      .visual-frame img { padding: 7px; }
+      .visual-label { display: none; }
+      .floating-card { position: relative; left: auto; bottom: auto; width: 100%; }
+      .section { padding: 55px 0; }
+      .section.compact { padding-top: 30px; }
+      .section-title { font-size: 31px; }
+      .section-intro { font-size: 16px; margin-bottom: 25px; }
+      .module-grid, .showcase, .api-grid { grid-template-columns: 1fr; }
+      .showcase-card.wide { grid-column: auto; }
+      .module-card { min-height: 220px; }
+      .showcase-media { padding: 11px; }
+      .showcase-copy { padding: 18px; }
+      .data-copy { padding: 25px; }
+      .data-options { padding: 14px; }
+      pre { font-size: 12px; padding: 18px; }
+      .install-card { padding: 23px; }
+      .install-command { align-items: flex-start; flex-direction: column; }
+      .footer-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="shell nav">
+      <a class="brand" href="#top" aria-label="drlib home">
+        <span class="brand-mark">dr</span>
+        <span>drlib</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#modules">Modules</a>
+        <a href="#examples">Examples</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#api">API</a>
+        <a class="nav-cta" href="https://github.com/SinaMehboodi/drlib" target="_blank" rel="noreferrer">View on GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="shell hero-grid">
+        <div class="reveal">
+          <div class="eyebrow">Scientific Python toolkit · MIT licensed</div>
+          <h1>From raw spectra to physical insight.</h1>
+          <p class="hero-lead">
+            <strong>drlib</strong> brings FMR spectroscopy analysis, complex peak fitting,
+            coplanar-waveguide field modelling, and 2-D REXS simulation into one reusable Python package.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#quickstart">Start with the toolkit ↓</a>
+            <a class="button secondary" href="https://github.com/SinaMehboodi/drlib/blob/main/tutorial.ipynb" target="_blank" rel="noreferrer">Open tutorial notebook ↗</a>
+          </div>
+          <div class="dependency-row" aria-label="Python dependencies">
+            <span>numpy</span><span>scipy</span><span>matplotlib</span><span>pandas</span><span>lmfit</span>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal" aria-label="Example FMR analysis output">
+          <figure class="visual-frame">
+            <img src="docs_assets/03_three_techniques.png" alt="Comparison of three FMR background-correction techniques" />
+            <figcaption class="visual-label">compare_techniques(...)</figcaption>
+          </figure>
+          <div class="floating-card">
+            <strong>One workflow, several viewpoints</strong>
+            <span>Compare ΔS21, derivative, and derivative-divide corrections side by side.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section compact" id="modules">
+      <div class="shell">
+        <p class="section-kicker reveal">Core modules</p>
+        <h2 class="section-title reveal">A small API for the full analysis chain.</h2>
+        <p class="section-intro reveal">
+          The toolkit is organised around four focused components. Each can be used independently or combined in one end-to-end workflow.
+        </p>
+
+        <div class="module-grid">
+          <article class="module-card reveal">
+            <span class="module-number">01</span>
+            <h3>Spectrum</h3>
+            <p>Load 2-D FMR data, correct backgrounds, denoise, zoom, plot, and perform arithmetic on spectra.</p>
+            <code>Spectrum.from_arrays(...)</code>
+          </article>
+          <article class="module-card reveal">
+            <span class="module-number">02</span>
+            <h3>Linecut</h3>
+            <p>Extract constant-field cuts and fit one, two, or three resonances using complex line shapes.</p>
+            <code>Linecut.one_peak(...)</code>
+          </article>
+          <article class="module-card reveal">
+            <span class="module-number">03</span>
+            <h3>CPW</h3>
+            <p>Calculate analytical Biot–Savart fields above a signal-gap-ground waveguide and inspect k-space excitation.</p>
+            <code>CPW.get_Kspectrum(...)</code>
+          </article>
+          <article class="module-card reveal">
+            <span class="module-number">04</span>
+            <h3>REXS2D</h3>
+            <p>Build skyrmion, helical, multidomain, or coexistence textures and simulate their FFT intensity.</p>
+            <code>REXS2D.compute_qspace()</code>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="examples">
+      <div class="shell">
+        <p class="section-kicker reveal">Selected outputs</p>
+        <h2 class="section-title reveal">Built around real scientific plots—not decorative mockups.</h2>
+        <p class="section-intro reveal">
+          The figures below are produced by the library’s bundled examples and reference dataset.
+        </p>
+
+        <div class="showcase">
+          <article class="showcase-card wide reveal">
+            <div class="showcase-media">
+              <img src="docs_assets/04_spectrum_dd.png" alt="Derivative-divide FMR spectrum" loading="lazy" />
+            </div>
+            <div class="showcase-copy">
+              <h3>FMR spectrum processing</h3>
+              <p>Apply background correction to a frequency-versus-field dataset while preserving the full 2-D structure for later cuts and fits.</p>
+            </div>
+          </article>
+
+          <article class="showcase-card reveal">
+            <div class="showcase-media">
+              <img src="docs_assets/06_rexs_skyrmion.png" alt="Skyrmion-lattice magnetisation texture and reciprocal-space intensity" loading="lazy" />
+            </div>
+            <div class="showcase-copy">
+              <h3>Magnetic-texture simulation</h3>
+              <p>Generate a real-space skyrmion lattice and its reciprocal-space FFT intensity with <code>REXS2D</code>.</p>
+            </div>
+          </article>
+
+          <article class="showcase-card reveal">
+            <div class="showcase-media">
+              <img src="docs_assets/08_cpw_field.png" alt="Analytical CPW magnetic field profile" loading="lazy" />
+            </div>
+            <div class="showcase-copy">
+              <h3>CPW field modelling</h3>
+              <p>Evaluate the analytical magnetic-field profile above a coplanar waveguide and connect geometry to excitation.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="quickstart">
+      <div class="shell quickstart-wrap">
+        <div class="reveal">
+          <p class="section-kicker">Quickstart</p>
+          <h2 class="section-title">Go from arrays to a fitted resonance.</h2>
+          <p class="section-intro" style="margin-bottom:0;">
+            Load the bundled MATLAB files, create a corrected spectrum, select a field cut, and fit a complex FMR peak.
+          </p>
+          <ol class="step-list">
+            <li><span>1</span><div>Load frequency, field, measurement, and reference arrays.</div></li>
+            <li><span>2</span><div>Construct a <code>Spectrum</code> with derivative-divide correction.</div></li>
+            <li><span>3</span><div>Extract a <code>Linecut</code> and fit the resonance.</div></li>
+          </ol>
+        </div>
+
+        <div class="code-window reveal">
+          <div class="code-toolbar">
+            <div class="window-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <button class="copy-button" type="button" data-copy-target="quick-code">Copy code</button>
+          </div>
+          <pre id="quick-code"><code><span class="code-keyword">from</span> drlib <span class="code-keyword">import</span> (
+    <span class="code-name">Spectrum</span>, <span class="code-name">Linecut</span>, <span class="code-name">load_mat_dataset</span>
+)
+
+freq, field, mlin, mlin_ref = <span class="code-name">load_mat_dataset</span>(
+    <span class="code-string">"PRJCT/Data"</span>
+)
+
+spec = <span class="code-name">Spectrum</span>.from_arrays(
+    freq, field, mlin, mlin_ref,
+    saturation=<span class="code-number">200</span>,
+    derivative_divide=<span class="code-keyword">True</span>,
+)
+
+cut = <span class="code-name">Linecut</span>(
+    cut=<span class="code-number">80</span>,
+    Spectrum=spec,
+    frequencies=(<span class="code-number">3.5e9</span>, <span class="code-number">4.7e9</span>),
+)
+
+freq_cut, fit, params, report = cut.one_peak(
+    resonance=[<span class="code-number">4.2e9</span>]
+)</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="data-panel reveal">
+          <div class="data-copy">
+            <p class="section-kicker">Flexible input</p>
+            <h2 class="section-title" style="font-size:clamp(28px,3vw,36px);">Use the data layout you already have.</h2>
+            <p>All supported constructors converge on the same internal representation, so downstream plotting, fitting, and arithmetic stay identical.</p>
+          </div>
+          <div class="data-options">
+            <div class="data-option">
+              <code>Spectrum(path="…")</code>
+              <span>LabView-style measurement-folder layout.</span>
+            </div>
+            <div class="data-option">
+              <code>Spectrum.from_mat(directory)</code>
+              <span>A flat directory containing four MATLAB files.</span>
+            </div>
+            <div class="data-option">
+              <code>Spectrum.from_arrays(...)</code>
+              <span>Raw NumPy arrays already available in memory.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="api">
+      <div class="shell">
+        <p class="section-kicker reveal">API at a glance</p>
+        <h2 class="section-title reveal">Reusable primitives beyond the main classes.</h2>
+        <p class="section-intro reveal">The package also exposes compact utilities for signal processing, line-shape modelling, field calculations, and plotting.</p>
+
+        <div class="api-grid">
+          <article class="api-card reveal">
+            <h3>Signal processing</h3>
+            <ul>
+              <li><code>derivative(...)</code></li>
+              <li><code>derivative_divide(...)</code></li>
+              <li><code>FFT_1D(...)</code></li>
+              <li><code>compare_techniques(...)</code></li>
+            </ul>
+          </article>
+          <article class="api-card reveal">
+            <h3>Models &amp; fields</h3>
+            <ul>
+              <li><code>dS21(...)</code></li>
+              <li><code>Lorentzian(...)</code></li>
+              <li><code>B_BS_analytic(...)</code></li>
+              <li><code>CPW(...)</code></li>
+            </ul>
+          </article>
+          <article class="api-card reveal">
+            <h3>I/O &amp; helpers</h3>
+            <ul>
+              <li><code>load_mat_dataset(...)</code></li>
+              <li><code>read_measurement_txt(...)</code></li>
+              <li><code>safe_style(...)</code></li>
+              <li><code>set_size(...)</code></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="install-card reveal">
+          <div>
+            <p class="section-kicker">Install locally</p>
+            <h2>Explore the package in editable mode.</h2>
+            <p>Clone the repository, install it, and work through the bundled notebook and reference data.</p>
+          </div>
+          <div class="install-command">
+            <span>git clone https://github.com/SinaMehboodi/drlib.git</span>
+            <a class="button primary" href="https://github.com/SinaMehboodi/drlib" target="_blank" rel="noreferrer">Repository ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-row">
+      <div>
+        <strong>drlib</strong> · MIT License · Created by Sina Mehboodi
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/SinaMehboodi/drlib" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="https://github.com/SinaMehboodi/drlib/blob/main/tutorial.ipynb" target="_blank" rel="noreferrer">Tutorial</a>
+        <a href="https://github.com/SinaMehboodi/drlib/blob/main/DATA_SHAPES.md" target="_blank" rel="noreferrer">Data shapes</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
+
+    document.querySelectorAll('[data-copy-target]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const target = document.getElementById(button.dataset.copyTarget);
+        const original = button.textContent;
+        try {
+          await navigator.clipboard.writeText(target.innerText);
+          button.textContent = 'Copied';
+        } catch {
+          button.textContent = 'Select code';
+        }
+        window.setTimeout(() => { button.textContent = original; }, 1400);
+      });
+    });
+  </script>
+</body>
+</html>
